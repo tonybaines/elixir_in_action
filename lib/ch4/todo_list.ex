@@ -1,3 +1,4 @@
+# From EiA ch4/todo_builder.ex
 defmodule TodoList do
   defstruct auto_id: 1, entries: %{}
 
@@ -13,7 +14,8 @@ defmodule TodoList do
     entry = Map.put(entry, :id, todo_list.auto_id)
     new_entries = Map.put(todo_list.entries, todo_list.auto_id, entry)
 
-    %TodoList{todo_list |
+    %TodoList{
+      todo_list |
       entries: new_entries,
       auto_id: todo_list.auto_id + 1
     }
@@ -48,6 +50,30 @@ end
 
 defmodule TodoList.CsvImporter do
   def import(file_name) do
-    TodoList.new()
+
+    entries = File.stream!(file_name)
+              |> Stream.map(&String.trim_trailing/1)
+              |> Stream.map(&String.split(&1, ","))
+              |> Stream.map(&List.to_tuple/1)
+              |> Stream.map(&to_entry/1)
+    #              |> Enum.to_list
+    #              |> IO.inspect
+
+    TodoList.new(entries)
+  end
+
+  def to_entry({date_str, title}) do
+    {:ok, date} = String.split(date_str, "/")
+                  |> List.to_tuple
+                  |> to_date
+    %{date: date, title: title}
+  end
+
+  def to_date({yr, mon, day}) do
+    Date.new(
+      String.to_integer(yr),
+      String.to_integer(mon),
+      String.to_integer(day)
+    )
   end
 end
