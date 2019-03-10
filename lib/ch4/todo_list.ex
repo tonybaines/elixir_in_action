@@ -47,4 +47,7 @@ defmodule TodoList do
 end
 
 defmodule TodoList.CsvImporter do
+  def import(file_name) do
+    TodoList.new()
+  end
 end

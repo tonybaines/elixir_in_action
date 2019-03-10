@@ -17,6 +17,6 @@ defmodule TodoListImportTest do
 
   test "import a todo lost from a CSV file" do
     todos = TodoList.CsvImporter.import("todos.csv")
-    assert todos == TodoList.new(entries())
+    assert length(TodoList.entries(todos, ~D[2018-12-19])) == 2
   end
 end
