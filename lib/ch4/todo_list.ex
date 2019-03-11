@@ -54,7 +54,6 @@ defmodule TodoList.CsvImporter do
     entries = File.stream!(file_name)
               |> Stream.map(&String.trim_trailing/1)
               |> Stream.map(&String.split(&1, ","))
-              |> Stream.map(&List.to_tuple/1)
               |> Stream.map(&to_entry/1)
     #              |> Enum.to_list
     #              |> IO.inspect
@@ -62,14 +61,13 @@ defmodule TodoList.CsvImporter do
     TodoList.new(entries)
   end
 
-  def to_entry({date_str, title}) do
+  def to_entry([date_str, title]) do
     {:ok, date} = String.split(date_str, "/")
-                  |> List.to_tuple
                   |> to_date
     %{date: date, title: title}
   end
 
-  def to_date({yr, mon, day}) do
+  def to_date([yr, mon, day]) do
     Date.new(
       String.to_integer(yr),
       String.to_integer(mon),
